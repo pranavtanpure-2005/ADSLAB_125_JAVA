@@ -1,0 +1,58 @@
+Implement Check if it is possible to transform one string to another. Statement: - Given two strings s1 and s2 (all letters in uppercase). Check if it is possible to convert s1 to s2 by performing following operations.
+1. Make some lowercase letters upper. 2. Delete all the lowercase letters
+
+
+
+import java.util.*;
+
+public class StringTransformation {
+
+    public static boolean canTransform(String s1, String s2) {
+        int n = s1.length(), m = s2.length();
+        boolean[][] dp = new boolean[n + 1][m + 1];
+        dp[0][0] = true;
+
+        for (int i = 1; i <= n; i++) {
+            if (Character.isLowerCase(s1.charAt(i - 1))) {
+                dp[i][0] = dp[i - 1][0];
+            } else {
+                dp[i][0] = false;
+            }
+        }
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                char c1 = s1.charAt(i - 1);
+                char c2 = s2.charAt(j - 1);
+
+                if (Character.toUpperCase(c1) == c2) {
+                    if (Character.isLowerCase(c1))
+                        dp[i][j] = dp[i - 1][j - 1] || dp[i - 1][j];
+                    else
+                        dp[i][j] = dp[i - 1][j - 1];
+                } else if (Character.isLowerCase(c1)) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = false;
+                }
+            }
+        }
+        return dp[n][m];
+    }
+
+    public static void main(String[] args) {
+        String s1 = "daBcd";
+        String s2 = "ABC";
+
+        if (canTransform(s1, s2))
+            System.out.println("YES");
+        else
+            System.out.println("NO");
+    }
+}
+-------------------------------------------------------------------------
+s1 = "daBcd", s2 = "ABC"
+
+Convert d → delete, a → A, keep B, delete c, and d → D (not used).
+
+So we can form "ABC" → YES, transformation is possible.
